@@ -7,10 +7,11 @@ export const uploadPhoto = (body) =>
     });
 
 export const fetchPhotos = () => {
+  console.log("API_URL:", API_URL);
   return fetch(API_URL)
     .then((res) => {
       if (!res.ok) {
-        console.log("API_URL:", API_URL);
+        
         throw new Error("Network response was not ok");
       }
       return res.json();
