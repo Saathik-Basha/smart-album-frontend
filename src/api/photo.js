@@ -9,15 +9,17 @@ export const uploadPhoto = (body) =>
         method: "POST",
         body: body,
     });
-
-export const fetchPhotos = ({ queryKey, pageParam }) => {
-    const [_key, { limit }] = queryKey;
-    return fetch(
-        `${API_URL}?${encodeQueryParams({
-            limit,
-            ...(pageParam ? { startKey: pageParam } : {}),
-        })}`
-    ).then((res) => res.json());
-};
-
-      
+    
+    export const fetchPhotos = ({ queryKey, pageParam }) => {
+        const [_key, { limit , label }] = queryKey;
+        return fetch(
+            `${API_URL}?${encodeQueryParams({
+                limit,
+                label,
+                startKey: pageParam,
+            })}`
+        ).then((res) => res.json());
+    };
+    
+    
+    
