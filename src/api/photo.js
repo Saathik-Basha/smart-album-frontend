@@ -1,19 +1,23 @@
+import { encodeQueryParams } from "../utils/encodeQueryParams";
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export const uploadPhoto = (body) => 
+console.log({ API_URL });
+
+export const uploadPhoto = (body) =>
     fetch(API_URL, {
         method: "POST",
         body: body,
     });
 
-export const fetchPhotos = () => {
-  console.log("API_URL:", API_URL);
-  return fetch(API_URL)
-    .then((res) => {
-      if (!res.ok) {
-        
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    });
+export const fetchPhotos = ({ queryKey, pageParam }) => {
+    const [_key, { limit }] = queryKey;
+    return fetch(
+        `${API_URL}?${encodeQueryParams({
+            limit,
+            ...(pageParam ? { startKey: pageParam } : {}),
+        })}`
+    ).then((res) => res.json());
 };
+
+      
