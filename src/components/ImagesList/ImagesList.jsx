@@ -1,44 +1,27 @@
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { Button } from "../Button/Button";
+import { Image } from "../Image/Image";
 
-export const ImagesList = ({ fetchNextPage, hasNextPage, isLoading, data ,isFetchingNextPage}) => {
-  if (isLoading) return <>Loading...</>;
+export const ImagesList = ({
+  fetchNextPage,
+  hasNextPage,
+  isLoading,
+  data,
+  isFetchingNextPage,
+}) => {
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+      </div>
+    );
 
   return (
     <div>
       <div className="columns-3 gap-4 my-8">
         {data?.pages.map((page) =>
-          page.items.map((image) => (
-            <div
-              key={image.primary_key}
-              className="rounded overflow-hidden shadow-lg bg-white mb-4 relative"
-            >
-              <div className="absolute top-1 right-1">
-                <XCircleIcon className="h-10 w-10 text-gray-500 opacity-50" />
-              </div>
-
-              <img src={image.url} alt={image.labels[0]} className="w-full" />
-
-              <div className="px-6 py-4">
-                <h4 className="text-gray-900 text-xl font-medium mb-2 pb-2">
-                  {image.name}
-                </h4>
-
-                {image.labels.map((label) => (
-                  <span
-                    key={label}
-                    className="inline-flex items-baseline bg-gray-200 rounded-full mr-2 mb-2 px-2 py-1 text-sm font-semibold text-gray-700"
-                  >
-                    <Link to={`/album/${label}`} className="p-1">
-                      #{label}
-                    </Link>
-                    <XCircleIcon className="h-6 w-6 text-red-500" />
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))
+          page.items.map((image, index) => <Image key={index} image={image} />)
         )}
       </div>
 
