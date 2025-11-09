@@ -9,6 +9,7 @@ export const uploadPhoto = (body) =>
   fetch(API_URL, {
     method: "POST",
     body: body,
+    
   });
 
 export const fetchPhotos = ({ queryKey, pageParam }) => {
