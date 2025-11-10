@@ -20,14 +20,15 @@ function App() {
           <NavBar />
           <div className="App container mx-auto py-8 max-w-7xl">
             <Routes>
+              {/* Private Routes */}
               <Route element={<Private />}>
-                <Route index element={<Home />} />
+                <Route path="/" element={<Home />} />
                 <Route path="album/:label" element={<Album />} />
               </Route>
-              <Route index element={<Home />} />
-              <Route path="album/:label" element={<Album />} />
-              <Route path="register" element={<Register />} />
-              <Route path="login" element={<Login />} />
+
+              {/* Public Routes */}
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
             </Routes>
           </div>
         </BrowserRouter>
