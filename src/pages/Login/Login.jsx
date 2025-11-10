@@ -16,7 +16,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const login = useMutation({
-    mutationFn: loginUser, // ✅ v5 syntax
+    mutationFn: loginUser,
     onSuccess: async (res) => {
       console.log("Login successful:", res);
 
@@ -26,15 +26,12 @@ export const Login = () => {
 
           const { AccessToken, ExpiresIn, RefreshToken, sub } = data;
 
-          // ✅ v5 syntax for invalidating queries
           queryClient.invalidateQueries({ queryKey: ["photos"] });
 
-          // ✅ Set cookies
           setCookie("AccessToken", AccessToken, { maxAge: ExpiresIn });
           setCookie("RefreshToken", RefreshToken, { maxAge: ExpiresIn });
           setCookie("userId", sub, { maxAge: ExpiresIn });
 
-          // ✅ Redirect after successful login
           navigate("/");
         } else {
           setError("Email or password is incorrect");
@@ -63,9 +60,17 @@ export const Login = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-4xl leading-tight mb-4 pb-4">Log in</h1>
-      <UserForm onSubmit={onSubmit} error={error} setError={setError} />
+    <div className="max-w-md mx-auto">
+      <h1 className="text-4xl leading-tight mb-6 pb-2 text-center">Log in</h1>
+
+      {/* Pass loading + error states to form */}
+      <UserForm
+        onSubmit={onSubmit}
+        error={error}
+        setError={setError}
+        isLoading={login.isPending} // ✅ add this prop
+        formType="login" // ✅ Add this
+      />
     </div>
   );
 };
