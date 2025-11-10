@@ -1,15 +1,17 @@
+import { Cookies } from "react-cookie";
+import { API_URL } from "../constants/api";
 import { encodeQueryParams } from "../utils/encodeQueryParams";
 
-const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:3000").replace(/\/$/, "");
-
-
 console.log({ API_URL });
+const cookies = new Cookies();
 
 export const uploadPhoto = (body) =>
   fetch(API_URL, {
     method: "POST",
     body: body,
-    
+    headers: {
+      Authorization: `Bearer ${cookies.get("AccessToken")}`,
+    },
   });
 
 export const fetchPhotos = ({ queryKey, pageParam }) => {
@@ -19,7 +21,12 @@ export const fetchPhotos = ({ queryKey, pageParam }) => {
       limit,
       label,
       startKey: pageParam,
-    })}`
+    })}`,
+    {
+      headers: {
+        Authorization: `Bearer ${cookies.get("AccessToken")}`,
+      },
+    }
   ).then((res) => res.json());
 };
 
@@ -28,6 +35,7 @@ export const updatePhoto = (data) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${cookies.get("AccessToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -37,5 +45,8 @@ export const deletePhoto = ({ primary_key, name }) => {
   return fetch(`${API_URL}/delete`, {
     method: "DELETE",
     body: JSON.stringify({ primary_key, name }),
+    headers: {
+      Authorization: `Bearer ${cookies.get("AccessToken")}`,
+    },
   });
 };
