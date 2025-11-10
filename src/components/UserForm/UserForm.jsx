@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Button } from "../Button/Button";
 
-export const UserForm = ({ onSubmit }) => {
+export const UserForm = ({ onSubmit ,setError,error}) => {
     const {
         register,
         handleSubmit,
@@ -17,7 +17,10 @@ export const UserForm = ({ onSubmit }) => {
                         Email
                     </label>
                     <input
-                        {...register("email", { required: true })}
+                        {...register("email", {
+                            required: true,
+                            onChange: () => setError?.(null),
+                        })}
                         className="form-control
                             block
                             w-full
@@ -44,7 +47,10 @@ export const UserForm = ({ onSubmit }) => {
                     </label>
                     <input
                         type="password"
-                        {...register("password", { required: true })}
+                        {...register("password", {
+                            required: true,
+                            onChange: () => setError?.(null),
+                        })}
                         className="form-control
                             block
                             w-full
@@ -62,6 +68,7 @@ export const UserForm = ({ onSubmit }) => {
                             focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                     />
                     {errors.password && <span className="text-red-600">This field is required</span>}
+                    {error && <span>{error}</span>}
                 </div>
 
                 <Button type="submit">Submit</Button>

@@ -1,55 +1,71 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/user";
 import { UserForm } from "../../components/UserForm/UserForm";
 
 export const Login = () => {
-    const queryClient = useQueryClient();
-    const [cookies, setCookie] = useCookies(["AccessToken", "RefreshToken"]);
-    const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [error, setError] = useState(null);
+  const [cookies, setCookie] = useCookies([
+    "AccessToken",
+    "RefreshToken",
+    "userId",
+  ]);
+  const navigate = useNavigate();
 
-    const login = useMutation({
-        mutationFn: loginUser,
-        onSuccess: async (res) => {
-            console.log("login is successful");
-            try {
-                const data = await res.json();
-                const { AccessToken, ExpiresIn, RefreshToken } = data;
+  const login = useMutation({
+    mutationFn: loginUser, // ✅ v5 syntax
+    onSuccess: async (res) => {
+      console.log("Login successful:", res);
 
-                // Invalidate photo queries after successful login
-                queryClient.invalidateQueries({ queryKey: ["photos"] });
+      try {
+        if (res.status === 200) {
+          const data = await res.json();
 
-                // Set cookies
-                setCookie("AccessToken", AccessToken, { maxAge: ExpiresIn });
-                setCookie("RefreshToken", RefreshToken, { maxAge: ExpiresIn });
+          const { AccessToken, ExpiresIn, RefreshToken, sub } = data;
 
-                // Navigate after successful login
-                navigate("/");
-            } catch (error) {
-                console.error("Failed to parse login response:", error);
-            }
-        },
-        onError: (error) => {
-            console.error("Login failed:", error);
-        },
-    });
+          // ✅ v5 syntax for invalidating queries
+          queryClient.invalidateQueries({ queryKey: ["photos"] });
 
-    useEffect(() => {
-        if (cookies.AccessToken) {
-            navigate("/");
+          // ✅ Set cookies
+          setCookie("AccessToken", AccessToken, { maxAge: ExpiresIn });
+          setCookie("RefreshToken", RefreshToken, { maxAge: ExpiresIn });
+          setCookie("userId", sub, { maxAge: ExpiresIn });
+
+          // ✅ Redirect after successful login
+          navigate("/");
+        } else {
+          setError("Email or password is incorrect");
+          throw new Error("Unsuccessful login");
         }
-    }, [cookies, navigate]);
+      } catch (error) {
+        console.error("Failed to parse login response:", error);
+        setError("Unexpected error occurred");
+      }
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+      setError("Login failed. Please try again.");
+    },
+  });
 
-    const onSubmit = (data) => {
-        login.mutate(data);
-    };
+  useEffect(() => {
+    if (cookies.AccessToken) {
+      navigate("/");
+    }
+  }, [cookies, navigate]);
 
-    return (
-        <div>
-            <h1 className="text-4xl leading-tight mb-4 pb-4">Log in</h1>
-            <UserForm onSubmit={onSubmit} />
-        </div>
-    );
+  const onSubmit = (data) => {
+    setError(null);
+    login.mutate(data);
+  };
+
+  return (
+    <div>
+      <h1 className="text-4xl leading-tight mb-4 pb-4">Log in</h1>
+      <UserForm onSubmit={onSubmit} error={error} setError={setError} />
+    </div>
+  );
 };
