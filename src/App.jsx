@@ -8,6 +8,7 @@ import { Home } from "./pages/Home/Home";
 import Album from "./pages/Album/Album";
 import { Register } from "./pages/Register/Register";
 import { Login } from "./pages/Login/Login";
+import { Private } from "./pages/Private/Private";
 
 const queryClient = new QueryClient();
 
